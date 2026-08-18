@@ -44,33 +44,33 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-[85vh] w-full flex items-center justify-center p-4 sm:p-8 overflow-hidden">
-      {/* MoltenMetal WebGL Background Canvas */}
-      <div className="absolute inset-0 z-0 pointer-events-none opacity-40 dark:opacity-60">
+    <div className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-slate-950/20">
+      {/* 100% Fullscreen MoltenMetal WebGL Background Canvas */}
+      <div className="fixed inset-0 w-full h-full -z-10">
         <MoltenMetal
           color1="#4F46E5"
           color2="#818CF8"
           color3="#06B6D4"
           speed={0.35}
-          scale={4}
-          detail={3}
-          glow={1.6}
-          coreSize={0.1}
-          swirl={1}
+          scale={3.5}
+          detail={4}
+          glow={2.0}
+          coreSize={0.12}
+          swirl={1.2}
           fold={-0.2}
-          blackPoint={0.05}
-          brightness={1.3}
+          blackPoint={0.02}
+          brightness={1.4}
           colorMode="molten"
           grain={true}
-          grainIntensity={0.05}
+          grainIntensity={0.06}
           mouseInteraction={true}
-          mouseStrength={0.3}
-          opacity={0.85}
+          mouseStrength={0.4}
+          opacity={1.0}
         />
       </div>
 
       {/* Login Card */}
-      <div className="relative z-10 w-full max-w-md p-8 sm:p-10 rounded-3xl bg-white/90 dark:bg-[#101318]/90 backdrop-blur-xl border border-slate-200/80 dark:border-white/10 shadow-2xl space-y-6">
+      <div className="relative z-10 w-full max-w-md p-8 sm:p-10 rounded-3xl bg-white/85 dark:bg-[#101318]/85 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-2xl space-y-6 my-auto">
         <div className="text-center space-y-3">
           <div className="w-12 h-12 rounded-2xl bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center text-white mx-auto shadow-lg shadow-indigo-500/30">
             <MessageSquare className="w-6 h-6" />
@@ -104,7 +104,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@company.com"
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-[#07080A] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all text-xs"
+              className="w-full px-4 py-3 rounded-xl bg-slate-50/80 dark:bg-[#07080A]/80 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all text-xs"
             />
           </div>
 
@@ -119,7 +119,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-[#07080A] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all text-xs"
+              className="w-full px-4 py-3 rounded-xl bg-slate-50/80 dark:bg-[#07080A]/80 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all text-xs"
             />
           </div>
 
