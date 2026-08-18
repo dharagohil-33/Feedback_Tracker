@@ -42,6 +42,8 @@ import {
   Trash2,
   Edit,
   AlertCircle,
+  AlertTriangle,
+  CheckCircle2,
   Lightbulb,
   X,
 } from 'lucide-react';
@@ -172,6 +174,9 @@ export default function FeedbackDetailPage() {
         if (res.aiAnalysis && typeof res.aiAnalysis === 'object') {
           setLocalAiAnalysis(res.aiAnalysis as Record<string, unknown>);
         }
+        // Auto-refresh follow-up actions list
+        const updatedActions = await fetchActionsApi({ feedbackId: feedback.id });
+        if (updatedActions) setActions(updatedActions);
         toast.success('AI analysis completed successfully!');
       }
     } catch (err) {
@@ -712,6 +717,42 @@ export default function FeedbackDetailPage() {
                       </div>
                     )}
                   </div>
+
+                  {/* Risks & Friction Points */}
+                  {((localAiAnalysis?.risks as string[])?.length ?? 0) > 0 && (
+                    <div className="space-y-3">
+                      <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold flex items-center gap-1.5">
+                        <AlertTriangle className="w-3.5 h-3.5 text-rose-500" />
+                        <span>Identified Risks & Friction Points</span>
+                      </span>
+                      <div className="space-y-2">
+                        {(localAiAnalysis?.risks as string[]).map((risk: string, idx: number) => (
+                          <div key={idx} className="p-3 rounded-xl bg-rose-500/5 border border-rose-500/20 text-xs font-medium text-rose-700 dark:text-rose-400 flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                            <span>{risk}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Recommended Next Actions */}
+                  {((localAiAnalysis?.recommendedActions as string[])?.length ?? 0) > 0 && (
+                    <div className="space-y-3">
+                      <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold flex items-center gap-1.5">
+                        <CheckSquare className="w-3.5 h-3.5 text-emerald-500" />
+                        <span>AI Recommended Next Actions</span>
+                      </span>
+                      <div className="space-y-2">
+                        {(localAiAnalysis?.recommendedActions as string[]).map((actionText: string, idx: number) => (
+                          <div key={idx} className="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20 text-xs font-medium text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                            <span>{actionText}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 /* UNANALYZED INITIAL STATE */

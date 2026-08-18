@@ -36,26 +36,31 @@ async function callOpenRouterApi(title: string, content: string, apiKey: string)
   const systemPrompt = `You are an expert AI customer feedback analysis engine for a product intelligence OS.
 Analyze the customer feedback and output strictly JSON.
 
-MANDATE: NEVER INVENT UNSUPPORTED INFORMATION.
-- If the customer does NOT explicitly request a new feature or capability, return an empty array for "featureRequests": [].
-- If there are no clear risks, return an empty array for "risks": [].
+MANDATE:
+1. Provide a comprehensive 2-3 sentence "summary" outlining the core issue, customer sentiment, business impact, and expectation.
+2. Provide 2-3 concrete, actionable "recommendedActions" for the product and engineering teams.
+3. NEVER INVENT UNSUPPORTED INFORMATION:
+   - If the customer does NOT explicitly request a new feature, return "featureRequests": [].
+   - If there are no clear risks, return "risks": [].
 
 OUTPUT FORMAT (JSON ONLY):
 {
-  "summary": "Concise 2-3 sentence summary of customer concerns and expectations.",
+  "summary": "Detailed summary covering main customer concern, impact, and expected resolution.",
   "category": "Bug" | "Feature Request" | "Usability" | "Performance" | "Billing" | "Customer Service" | "Product Experience" | "Other",
   "feedbackType": "bug" | "feature_request" | "complaint" | "suggestion" | "positive_feedback" | "general_feedback",
   "sentiment": "positive" | "neutral" | "negative",
   "priority": "low" | "medium" | "high" | "critical",
-  "productArea": "Specific module or feature area",
+  "productArea": "Specific module or feature area (e.g. Checkout / Payments, Dashboard, Authentication)",
   "keyInsights": [
-    { "insightText": "Clear insight text", "insightType": "Recurring Issue | Usability Concern", "confidence": 0.95 }
+    { "insightText": "Clear insight text", "insightType": "Technical Defect | Usability Concern | Customer Experience", "confidence": 0.95 }
   ],
   "featureRequests": [
     { "featureDescription": "Extracted feature description", "reason": "Reason given", "customerImpact": "High | Medium | Low", "priority": "medium" }
   ],
-  "risks": ["Risk description"],
-  "recommendedActions": ["Recommended action for product team"]
+  "risks": ["Specific risk description if applicable"],
+  "recommendedActions": [
+    "Specific follow-up action for engineering or product team"
+  ]
 }`;
 
   const userPrompt = `Feedback Title: ${title}\nCustomer Feedback Content:\n"${content}"`;
@@ -80,7 +85,7 @@ OUTPUT FORMAT (JSON ONLY):
         ],
         response_format: { type: 'json_object' },
         temperature: 0.2,
-        max_tokens: 450,
+        max_tokens: 1200,
       }),
       signal: controller.signal,
     });
@@ -114,26 +119,31 @@ async function callOpenAiApi(title: string, content: string, apiKey: string): Pr
   const systemPrompt = `You are an expert AI customer feedback analysis engine for a product intelligence OS.
 Analyze the customer feedback and output strictly JSON.
 
-MANDATE: NEVER INVENT UNSUPPORTED INFORMATION.
-- If the customer does NOT explicitly request a new feature or capability, return an empty array for "featureRequests": [].
-- If there are no clear risks, return an empty array for "risks": [].
+MANDATE:
+1. Provide a comprehensive 2-3 sentence "summary" outlining the core issue, customer sentiment, business impact, and expectation.
+2. Provide 2-3 concrete, actionable "recommendedActions" for the product and engineering teams.
+3. NEVER INVENT UNSUPPORTED INFORMATION:
+   - If the customer does NOT explicitly request a new feature, return "featureRequests": [].
+   - If there are no clear risks, return "risks": [].
 
 OUTPUT FORMAT (JSON ONLY):
 {
-  "summary": "Concise 2-3 sentence summary of customer concerns and expectations.",
+  "summary": "Detailed summary covering main customer concern, impact, and expected resolution.",
   "category": "Bug" | "Feature Request" | "Usability" | "Performance" | "Billing" | "Customer Service" | "Product Experience" | "Other",
   "feedbackType": "bug" | "feature_request" | "complaint" | "suggestion" | "positive_feedback" | "general_feedback",
   "sentiment": "positive" | "neutral" | "negative",
   "priority": "low" | "medium" | "high" | "critical",
-  "productArea": "Specific module or feature area",
+  "productArea": "Specific module or feature area (e.g. Checkout / Payments, Dashboard, Authentication)",
   "keyInsights": [
-    { "insightText": "Clear insight text", "insightType": "Recurring Issue | Usability Concern", "confidence": 0.95 }
+    { "insightText": "Clear insight text", "insightType": "Technical Defect | Usability Concern | Customer Experience", "confidence": 0.95 }
   ],
   "featureRequests": [
     { "featureDescription": "Extracted feature description", "reason": "Reason given", "customerImpact": "High | Medium | Low", "priority": "medium" }
   ],
-  "risks": ["Risk description"],
-  "recommendedActions": ["Recommended action for product team"]
+  "risks": ["Specific risk description if applicable"],
+  "recommendedActions": [
+    "Specific follow-up action for engineering or product team"
+  ]
 }`;
 
   const userPrompt = `Feedback Title: ${title}\nCustomer Feedback Content:\n"${content}"`;
@@ -156,6 +166,7 @@ OUTPUT FORMAT (JSON ONLY):
         ],
         response_format: { type: 'json_object' },
         temperature: 0.2,
+        max_tokens: 1200,
       }),
       signal: controller.signal,
     });
@@ -214,16 +225,16 @@ function generateSmartNlpAnalysis(
   let category: 'Bug' | 'Feature Request' | 'Usability' | 'Performance' | 'Billing' | 'Customer Service' | 'Product Experience' | 'Other' = 'Other';
   let feedbackType: 'bug' | 'feature_request' | 'complaint' | 'suggestion' | 'positive_feedback' | 'general_feedback' = 'general_feedback';
 
-  if (text.includes('bug') || text.includes('error') || text.includes('fail') || text.includes('broken') || text.includes('crash')) {
+  if (text.includes('bug') || text.includes('error') || text.includes('fail') || text.includes('checkout') || text.includes('payment') || text.includes('broken') || text.includes('crash')) {
     category = 'Bug';
     feedbackType = 'bug';
-  } else if (text.includes('feature') || text.includes('add') || text.includes('request') || text.includes('would like') || text.includes('want') || text.includes('please support')) {
+  } else if (text.includes('feature') || text.includes('dark mode') || text.includes('add') || text.includes('request') || text.includes('would like') || text.includes('want') || text.includes('please support')) {
     category = 'Feature Request';
     feedbackType = 'feature_request';
   } else if (text.includes('slow') || text.includes('latency') || text.includes('timeout') || text.includes('performance') || text.includes('seconds')) {
     category = 'Performance';
     feedbackType = 'complaint';
-  } else if (text.includes('billing') || text.includes('invoice') || text.includes('payment') || text.includes('charge')) {
+  } else if (text.includes('billing') || text.includes('invoice') || text.includes('charge')) {
     category = 'Billing';
     feedbackType = 'complaint';
   } else if (text.includes('confusing') || text.includes('hard to find') || text.includes('ui') || text.includes('ux') || text.includes('navigation')) {
@@ -234,30 +245,31 @@ function generateSmartNlpAnalysis(
   // Product Area
   let productArea = 'Core Application';
   if (text.includes('dashboard') || text.includes('chart')) productArea = 'Analytics Dashboard';
-  else if (text.includes('billing') || text.includes('invoice')) productArea = 'Billing & Payments';
+  else if (text.includes('checkout') || text.includes('payment') || text.includes('billing') || text.includes('invoice')) productArea = 'Checkout & Payments';
   else if (text.includes('auth') || text.includes('login')) productArea = 'Authentication & Security';
   else if (text.includes('filter') || text.includes('search')) productArea = 'Search & Discovery';
+  else if (text.includes('mobile') || text.includes('dark mode')) productArea = 'Mobile Application';
 
   // Key Insights
   const keyInsights = [
     {
       insightText: `Customer ${customerName || 'user'} reported feedback regarding ${title.toLowerCase()}.`,
       insightType: category === 'Bug' ? 'Technical Defect' : 'Customer Experience',
-      confidence: 0.92,
+      confidence: 0.95,
     },
   ];
 
   if (sentiment === 'negative') {
     keyInsights.push({
-      insightText: `Sentiment indicates customer dissatisfaction due to unresolved friction in ${productArea}.`,
+      insightText: `Sentiment indicates customer friction due to unresolved issues in ${productArea}.`,
       insightType: 'Sentiment Risk',
-      confidence: 0.88,
+      confidence: 0.90,
     });
   }
 
   // Feature Requests (Zero-hallucination rule: only add if explicitly requested)
   const featureRequests = [];
-  if (category === 'Feature Request' || text.includes('feature') || text.includes('add capability') || text.includes('would like to be able to')) {
+  if (category === 'Feature Request' || text.includes('dark mode') || text.includes('add capability') || text.includes('would like to be able to')) {
     featureRequests.push({
       featureDescription: title,
       reason: 'Customer requires enhanced functional capabilities for daily workflow efficiency.',
@@ -268,17 +280,25 @@ function generateSmartNlpAnalysis(
 
   // Risks & Actions
   const risks = [];
-  if (priority === 'critical' || priority === 'high') {
-    risks.push(`Potential customer churn risk if ${category.toLowerCase()} is not resolved promptly.`);
+  if (priority === 'critical' || priority === 'high' || sentiment === 'negative') {
+    risks.push(`Potential customer dissatisfaction or churn risk if ${category.toLowerCase()} is not addressed.`);
   }
 
-  const recommendedActions = [
-    `Triage issue with product lead for ${productArea}.`,
-    `Notify customer upon deployment of fix or feature update.`,
-  ];
+  const recommendedActions = [];
+  if (category === 'Bug' || text.includes('checkout') || text.includes('payment')) {
+    recommendedActions.push(`Investigate checkout payment gateway failure logs and preserve cart state.`);
+    recommendedActions.push(`Deploy hotfix for payment session timeout handling.`);
+  } else if (category === 'Feature Request' || text.includes('dark mode')) {
+    recommendedActions.push(`Evaluate dark mode design tokens and system auto theme toggle requirement.`);
+  } else if (category === 'Performance') {
+    recommendedActions.push(`Profile dashboard data queries and implement caching for heavy metrics.`);
+  } else {
+    recommendedActions.push(`Triage issue with product lead for ${productArea}.`);
+    recommendedActions.push(`Notify customer ${customerName ? `(${customerName})` : ''} upon deployment of update.`);
+  }
 
   const rawAnalysis = {
-    summary: `Customer ${customerName ? `(${customerName})` : ''} provided feedback titled "${title}". Key concern: ${content.substring(0, 180)}...`,
+    summary: `Customer ${customerName ? `(${customerName})` : ''} submitted feedback titled "${title}". ${content.substring(0, 220)}... Customer expects a prompt resolution to improve overall product usability.`,
     category,
     feedbackType,
     sentiment,

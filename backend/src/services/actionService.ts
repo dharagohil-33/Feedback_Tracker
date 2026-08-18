@@ -60,15 +60,24 @@ export async function listUserActions(_userId: string, query?: ActionQueryInput)
     builder = builder.eq('priority', dbPrio);
   }
 
-  builder = builder.order('created_at', { ascending: false });
-
   const { data, error } = await builder;
 
   if (error) {
     throw new AppError(`Failed to fetch actions: ${error.message}`, 500);
   }
 
-  return (data || []).map((row) => formatActionRecord(row as Record<string, unknown>));
+  const rawItems = (data || []).map((row) => formatActionRecord(row as Record<string, unknown>));
+
+  // Deduplicate items by description + feedbackId to prevent duplicate cards in UI
+  const seenKeys = new Set<string>();
+  const uniqueItems = rawItems.filter((item) => {
+    const key = `${(item.description || '').trim().toLowerCase()}_${item.feedbackId || ''}`;
+    if (seenKeys.has(key)) return false;
+    seenKeys.add(key);
+    return true;
+  });
+
+  return uniqueItems;
 }
 
 export async function getActionById(_userId: string, actionId: string) {

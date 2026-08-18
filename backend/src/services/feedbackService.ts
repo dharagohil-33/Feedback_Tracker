@@ -226,7 +226,7 @@ export async function createFeedback(userId: string, input: CreateFeedbackInput)
     file_path: input.filePath || null,
     file_size: input.fileSize || null,
     mime_type: input.mimeType || null,
-    ai_status: 'not_analyzed',
+    ai_status: 'pending',
     updated_at: new Date().toISOString(),
   };
 
@@ -293,7 +293,7 @@ export async function deleteFeedback(userId: string, feedbackId: string) {
   return { success: true, id: feedbackId };
 }
 
-export async function analyzeFeedback(_userId: string, feedbackId: string) {
+export async function analyzeFeedback(userId: string, feedbackId: string) {
   // Fetch feedback item
   const { data: fbData, error: fbErr } = await supabaseAdmin
     .from('feedback')
@@ -376,6 +376,35 @@ export async function analyzeFeedback(_userId: string, feedbackId: string) {
       }));
       const { data: featData } = await supabaseAdmin.from('feature_requests').insert(featureRows).select('*');
       insertedFeatures = (featData as Record<string, unknown>[]) || [];
+    }
+
+    // Auto-create Follow-up Action Items in database from AI recommended actions (strictly deduplicated)
+    if (aiResult.recommendedActions && aiResult.recommendedActions.length > 0) {
+      const { data: existingActions } = await supabaseAdmin
+        .from('actions')
+        .select('description')
+        .eq('feedback_id', feedbackId);
+
+      const existingDescs = new Set((existingActions || []).map((a) => (a.description || '').trim().toLowerCase()));
+
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 3);
+
+      const newActionRows = aiResult.recommendedActions
+        .filter((recText: string) => recText && recText.trim() !== '' && !existingDescs.has(recText.trim().toLowerCase()))
+        .map((recText: string) => ({
+          feedback_id: feedbackId,
+          description: recText.trim(),
+          owner: 'Unassigned',
+          due_date: dueDate.toISOString(),
+          priority: dbPriority,
+          status: 'open',
+          created_by: userId,
+        }));
+
+      if (newActionRows.length > 0) {
+        await supabaseAdmin.from('actions').insert(newActionRows);
+      }
     }
 
     return {
