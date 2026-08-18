@@ -8,6 +8,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   BarChart3,
+  CheckSquare,
   Sparkles,
   Menu,
   X,
@@ -34,6 +35,7 @@ export function Sidebar() {
   const navItems = [
     { label: 'Overview', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Feedback Workspace', href: '/feedback', icon: MessageSquare },
+    { label: 'Action Tracker', href: '/actions', icon: CheckSquare },
     { label: 'Product Insights', href: '/insights', icon: BarChart3 },
   ];
 
