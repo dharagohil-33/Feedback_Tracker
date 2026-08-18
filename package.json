@@ -1,0 +1,17 @@
+{
+  "name": "ai-feedback-tracker-root",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "type-check:frontend": "npm --prefix frontend run type-check",
+    "type-check:backend": "npm --prefix backend run type-check",
+    "type-check": "npm run type-check:frontend && npm run type-check:backend",
+    "lint:frontend": "npm --prefix frontend run lint",
+    "lint:backend": "npm --prefix backend run lint",
+    "lint": "npm run lint:frontend && npm run lint:backend"
+  }
+}
