@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
-import { MoltenMetal } from '../../components/MoltenMetal';
+import LiquidEther from '../../components/LiquidEther';
 import { MessageSquare, User, Mail, Lock, ArrowRight } from 'lucide-react';
 
 export default function RegisterPage() {
@@ -57,27 +57,24 @@ export default function RegisterPage() {
 
   return (
     <div className="fixed inset-0 z-50 w-screen h-screen flex items-center justify-center p-4 sm:p-6 overflow-y-auto bg-[#07080A]">
-      {/* 100% Fullscreen Dark Theme MoltenMetal WebGL Background Canvas */}
+      {/* 100% Fullscreen Dark Theme LiquidEther WebGL Background Canvas */}
       <div className="fixed inset-0 w-full h-full -z-10">
-        <MoltenMetal
-          color1="#4F46E5"
-          color2="#312E81"
-          color3="#06B6D4"
-          speed={0.3}
-          scale={3.5}
-          detail={4}
-          glow={1.8}
-          coreSize={0.1}
-          swirl={1.2}
-          fold={-0.25}
-          blackPoint={0.35}
-          brightness={1.6}
-          colorMode="molten"
-          grain={true}
-          grainIntensity={0.06}
-          mouseInteraction={true}
-          mouseStrength={0.4}
-          opacity={1.0}
+        <LiquidEther
+          colors={['#4F46E5', '#6366F1', '#06B6D4', '#38BDF8', '#312E81']}
+          mouseForce={20}
+          cursorSize={100}
+          isViscous={true}
+          viscous={30}
+          iterationsViscous={32}
+          iterationsPoisson={32}
+          resolution={0.5}
+          isBounce={false}
+          autoDemo={true}
+          autoSpeed={0.5}
+          autoIntensity={2.2}
+          takeoverDuration={0.25}
+          autoResumeDelay={3000}
+          autoRampDuration={0.6}
         />
       </div>
 
