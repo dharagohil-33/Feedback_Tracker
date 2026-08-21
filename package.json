@@ -11,6 +11,7 @@
     "react-dom": "^18"
   },
   "scripts": {
+    "build": "npm run build:frontend",
     "dev:frontend": "npm --prefix frontend run dev",
     "dev:backend": "npm --prefix backend run dev",
     "build:frontend": "npm --prefix frontend run build",
