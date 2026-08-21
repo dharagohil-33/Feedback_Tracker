@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:frontend": "next build",
     "start": "next start",
     "lint": "eslint src --ext .ts,.tsx",
     "type-check": "tsc --noEmit"
